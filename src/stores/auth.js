@@ -43,11 +43,11 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async cadastrar(nome, email, senha) {
+    async cadastrar(nome, email, senha, website = '') {
       this.carregando = true
       this.erro = null
       try {
-        await cadastroApi({ nome, email, senha })
+        await cadastroApi({ nome, email, senha, website })
         return true
       } catch (error) {
         this.erro = error.response?.data?.mensagem || 'Erro ao criar conta.'

@@ -1,5 +1,11 @@
+import { nextTick } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+
+function prefereMenosMovimento() {
+  return typeof window !== 'undefined'
+    && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,6 +19,21 @@ const router = createRouter({
       path: '/cadastro',
       name: 'cadastro',
       component: () => import('@/views/CadastroView.vue')
+    },
+    {
+      path: '/esqueci-senha',
+      name: 'esqueci-senha',
+      component: () => import('@/views/EsqueciSenhaView.vue')
+    },
+    {
+      path: '/redefinir-senha',
+      name: 'redefinir-senha',
+      component: () => import('@/views/RedefinirSenhaView.vue')
+    },
+    {
+      path: '/verificar-email',
+      name: 'verificar-email',
+      component: () => import('@/views/VerificarEmailView.vue')
     },
     {
       path: '/',
@@ -45,6 +66,11 @@ const router = createRouter({
           component: () => import('@/views/CurriculosView.vue')
         },
         {
+          path: 'insights',
+          name: 'insights',
+          component: () => import('@/views/InsightsView.vue')
+        },
+        {
           path: 'perfil',
           name: 'perfil',
           component: () => import('@/views/PerfilView.vue')
@@ -62,6 +88,27 @@ router.beforeEach((to) => {
   if ((to.name === 'login' || to.name === 'cadastro') && auth.estaLogado) {
     return { name: 'dashboard' }
   }
+})
+
+// Transição nativa de rota (View Transitions API) — progressive enhancement.
+// Onde não houver suporte (ex.: Firefox), cai no <Transition> CSS do AppLayout.
+// Respeita prefers-reduced-motion e ignora a primeira carga.
+router.beforeResolve((to, from, next) => {
+  const primeiraCarga = from.matched.length === 0
+  if (
+    typeof document === 'undefined' ||
+    !document.startViewTransition ||
+    primeiraCarga ||
+    to.path === from.path ||
+    prefereMenosMovimento()
+  ) {
+    next()
+    return
+  }
+  document.startViewTransition(() => {
+    next()
+    return nextTick()
+  })
 })
 
 export default router

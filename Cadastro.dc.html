@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box}body{margin:0}::placeholder{color:#82887A}</style>
+</helmet>
+<div style="--bg:#F1F3EC;--surface:#FFFFFF;--surface-alt:#E7EBDF;--border:#DCE2D3;--text-primary:#20241E;--text-secondary:#54594B;--text-muted:#82887A;--moss:#3F5D4E;--moss-hover:#35503F;--moss-subtle:rgba(63,93,78,0.12);--clay:#C1652E;font-family:'Inter',system-ui,sans-serif;display:flex;min-height:100vh;background:var(--bg);color:var(--text-primary)">
+
+  <div style="width:400px;flex-shrink:0;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:40px 44px;background:var(--moss)">
+    <div style="position:absolute;top:-140px;right:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle, rgba(193,101,46,0.30) 0%, transparent 68%);pointer-events:none"></div>
+    <div style="position:absolute;bottom:-100px;left:-90px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 65%);pointer-events:none"></div>
+
+    <div style="position:relative;z-index:1;display:flex;align-items:center;gap:10px">
+      <div style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="width:12px;height:12px;background:var(--clay);transform:rotate(45deg);border-radius:3px"></div></div>
+      <span style="font-family:'Source Serif 4',serif;font-weight:600;font-size:18px;letter-spacing:-0.01em;color:#F1F3EC">Marco</span>
+    </div>
+
+    <div style="position:relative;z-index:1">
+      <p style="font-family:'Source Serif 4',serif;font-size:32px;font-weight:600;line-height:1.25;letter-spacing:-0.01em;color:#F1F3EC;margin:0 0 12px">Sua próxima vaga<br>começa aqui.</p>
+      <p style="font-size:13.5px;color:rgba(241,243,236,0.7);line-height:1.65;margin:0 0 26px">Organize sua busca com<br>clareza — e sem pressa.</p>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span style="width:6px;height:6px;border-radius:50%;background:rgba(241,243,236,0.25)"></span>
+        <span style="width:22px;height:6px;border-radius:3px;background:var(--clay)"></span>
+        <span style="width:6px;height:6px;border-radius:50%;background:rgba(241,243,236,0.25)"></span>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:48px 64px">
+    <div style="width:100%;max-width:392px;padding:44px 44px;border-radius:20px;background:var(--surface);border:1px solid var(--border);box-shadow:0 24px 56px rgba(32,36,30,0.08)">
+
+      <sc-if value="{{ naoConcluido }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="margin-bottom:28px">
+            <h2 style="font-family:'Source Serif 4',serif;font-size:25px;font-weight:600;letter-spacing:-0.01em;color:var(--text-primary);margin:0 0 6px">Criar conta</h2>
+            <p style="font-size:13.5px;color:var(--text-muted);margin:0">Dois minutos e você já começa a rastrear</p>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label style="font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase">Nome completo</label>
+              <input type="text" placeholder="Como podemos te chamar" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-alt);color:var(--text-primary);font-size:14px;font-family:inherit;outline:none" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label style="font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase">Email</label>
+              <input type="email" placeholder="seu@email.com" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-alt);color:var(--text-primary);font-size:14px;font-family:inherit;outline:none" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label style="font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase">Senha</label>
+              <input type="password" placeholder="Mínimo 8 caracteres" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-alt);color:var(--text-primary);font-size:14px;font-family:inherit;outline:none" />
+            </div>
+
+            <button onclick="{{ concluir }}" style="margin-top:8px;padding:12px;border:none;border-radius:10px;background:var(--moss);color:#F1F3EC;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(63,93,78,0.25)">Criar conta</button>
+          </div>
+
+          <p style="text-align:center;font-size:13px;color:var(--text-muted);margin:24px 0 0">Já tem conta? <a href="Login.dc.html" style="color:var(--moss);font-weight:700;text-decoration:none">Entrar</a></p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ concluido }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:8px 0">
+          <div style="width:60px;height:60px;border-radius:50%;background:var(--moss-subtle);color:var(--moss);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin-bottom:4px">✓</div>
+          <p style="font-family:'Source Serif 4',serif;font-size:22px;font-weight:600;color:var(--text-primary);margin:0">Conta criada</p>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin:0">Enviamos um link de confirmação — ele vale por 2 horas.</p>
+          <a href="Login.dc.html" style="margin-top:10px;width:100%;padding:12px;border-radius:10px;background:var(--moss);color:#F1F3EC;font-size:14px;font-weight:700;text-decoration:none;text-align:center">Ir para o login</a>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { concluido: false };
+  renderVals() {
+    return {
+      naoConcluido: !this.state.concluido,
+      concluido: this.state.concluido,
+      concluir: () => this.setState({ concluido: true }),
+    };
+  }
+}
+</script>
+</body>
+</html>

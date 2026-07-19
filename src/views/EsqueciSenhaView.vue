@@ -16,12 +16,12 @@
       </div>
 
       <div class="panel-bottom">
-        <p class="panel-tagline">Sua próxima vaga<br>começa aqui.</p>
-        <p class="panel-sub">Organize sua busca com<br>clareza — e sem pressa.</p>
+        <p class="panel-tagline">Sem pânico.<br>Acontece com todo mundo.</p>
+        <p class="panel-sub">Um link no seu email e você<br>volta de onde parou.</p>
         <div class="panel-dots">
           <span class="dot"></span>
-          <span class="dot active"></span>
           <span class="dot"></span>
+          <span class="dot active"></span>
         </div>
       </div>
     </div>
@@ -30,40 +30,17 @@
     <div class="form-area">
       <div class="form-card">
 
-        <div v-if="!sucesso">
+        <div v-if="!enviado">
           <div class="form-header">
-            <h2 class="form-title">Criar conta</h2>
-            <p class="form-sub">Dois minutos e você já começa a rastrear</p>
+            <h2 class="form-title">Esqueceu sua senha?</h2>
+            <p class="form-sub">Informe seu email e enviaremos um link para redefinir</p>
           </div>
 
-          <form @submit.prevent="handleCadastro">
-            <!-- Honeypot anti-bot: invisível para humanos, bots preenchem -->
-            <div class="hp-field" aria-hidden="true">
-              <label for="website">Website</label>
-              <input
-                id="website"
-                v-model="form.website"
-                type="text"
-                tabindex="-1"
-                autocomplete="off"
-              />
-            </div>
-
-            <div class="field">
-              <label>Nome completo</label>
-              <input
-                v-model="form.nome"
-                type="text"
-                placeholder="Como podemos te chamar"
-                autocomplete="name"
-                required
-              />
-            </div>
-
+          <form @submit.prevent="handleEnviar">
             <div class="field">
               <label>Email</label>
               <input
-                v-model="form.email"
+                v-model="email"
                 type="email"
                 placeholder="seu@email.com"
                 autocomplete="email"
@@ -71,42 +48,28 @@
               />
             </div>
 
-            <div class="field">
-              <label>Senha</label>
-              <div class="input-wrap">
-                <input
-                  v-model="form.senha"
-                  :type="mostrarSenha ? 'text' : 'password'"
-                  placeholder="Mínimo 8 caracteres"
-                  autocomplete="new-password"
-                  minlength="8"
-                  required
-                />
-                <button type="button" class="toggle-senha" @click="mostrarSenha = !mostrarSenha">
-                  {{ mostrarSenha ? 'Ocultar' : 'Ver' }}
-                </button>
-              </div>
-            </div>
+            <p v-if="erro" class="erro">{{ erro }}</p>
 
-            <p v-if="auth.erro" class="erro">{{ auth.erro }}</p>
-
-            <button type="submit" class="btn-primary" :disabled="auth.carregando">
-              <Loader2 v-if="auth.carregando" :size="14" class="spin" />
-              {{ auth.carregando ? 'Criando conta...' : 'Criar conta' }}
+            <button type="submit" class="btn-primary" :disabled="carregando">
+              <Loader2 v-if="carregando" :size="14" class="spin" />
+              {{ carregando ? 'Enviando...' : 'Enviar link' }}
             </button>
           </form>
 
           <p class="auth-link">
-            Já tem conta?
-            <RouterLink to="/login">Entrar</RouterLink>
+            Lembrou a senha?
+            <RouterLink to="/login">Voltar ao login</RouterLink>
           </p>
         </div>
 
         <div v-else class="sucesso-box">
           <div class="sucesso-ring">✓</div>
-          <p class="sucesso-titulo">Conta criada</p>
-          <p class="sucesso-sub">Enviamos um link de confirmação — ele vale por 2 horas.</p>
-          <RouterLink to="/login" class="btn-primary btn-link">Ir para o login</RouterLink>
+          <p class="sucesso-titulo">Confira seu email</p>
+          <p class="sucesso-sub">
+            Se este email estiver cadastrado, você receberá um link para
+            redefinir a senha. Ele vale por 30 minutos.
+          </p>
+          <RouterLink to="/login" class="btn-primary btn-link">Voltar ao login</RouterLink>
         </div>
 
       </div>
@@ -116,18 +79,26 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { ref } from 'vue'
+import { esqueciSenha } from '@/api/auth'
 import { Loader2 } from 'lucide-vue-next'
 
-const auth = useAuthStore()
-const sucesso = ref(false)
-const mostrarSenha = ref(false)
-const form = reactive({ nome: '', email: '', senha: '', website: '' })
+const email = ref('')
+const enviado = ref(false)
+const carregando = ref(false)
+const erro = ref(null)
 
-async function handleCadastro() {
-  const ok = await auth.cadastrar(form.nome, form.email, form.senha, form.website)
-  if (ok) sucesso.value = true
+async function handleEnviar() {
+  carregando.value = true
+  erro.value = null
+  try {
+    await esqueciSenha({ email: email.value })
+    enviado.value = true
+  } catch (error) {
+    erro.value = error.response?.data?.mensagem || 'Não foi possível enviar. Tente novamente.'
+  } finally {
+    carregando.value = false
+  }
 }
 </script>
 
@@ -139,7 +110,7 @@ async function handleCadastro() {
   background: var(--bg);
 }
 
-/* ── Painel esquerdo — idêntico ao login ── */
+/* ── Painel esquerdo — musgo sólido ── */
 .art-panel {
   width: 400px;
   flex-shrink: 0;
@@ -322,28 +293,6 @@ form {
   box-shadow: 0 0 0 3px var(--moss-subtle);
 }
 
-.input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-wrap input {
-  padding-right: 52px;
-}
-
-.toggle-senha {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  color: var(--moss);
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
 .erro {
   font-size: 12px;
   color: var(--danger);
@@ -382,34 +331,32 @@ form {
 
 .btn-link {
   text-decoration: none;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .spin { animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Sucesso ── */
 .sucesso-box {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
-  padding: 8px 0;
+  gap: 10px;
 }
 
 .sucesso-ring {
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: var(--moss-subtle);
   color: var(--moss);
+  font-size: 22px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .sucesso-titulo {
@@ -439,14 +386,4 @@ form {
 }
 
 .auth-link a:hover { text-decoration: underline; }
-
-/* Honeypot: fora da tela, invisível para humanos — não usar display:none
-   (alguns bots pulam campos escondidos assim) */
-.hp-field {
-  position: absolute;
-  left: -9999px;
-  top: -9999px;
-  opacity: 0;
-  pointer-events: none;
-}
 </style>

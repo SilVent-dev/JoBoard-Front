@@ -16,12 +16,12 @@
       </div>
 
       <div class="panel-bottom">
-        <p class="panel-tagline">Sua próxima vaga<br>começa aqui.</p>
-        <p class="panel-sub">Organize sua busca com<br>clareza — e sem pressa.</p>
+        <p class="panel-tagline">Uma senha nova<br>e pronto.</p>
+        <p class="panel-sub">Escolha com calma — só precisa<br>ter 8 caracteres ou mais.</p>
         <div class="panel-dots">
           <span class="dot"></span>
-          <span class="dot active"></span>
           <span class="dot"></span>
+          <span class="dot active"></span>
         </div>
       </div>
     </div>
@@ -30,52 +30,26 @@
     <div class="form-area">
       <div class="form-card">
 
-        <div v-if="!sucesso">
+        <div v-if="!token" class="sucesso-box">
+          <p class="sucesso-titulo">Link incompleto</p>
+          <p class="sucesso-sub">
+            Este link de redefinição não é válido. Solicite um novo abaixo.
+          </p>
+          <RouterLink to="/esqueci-senha" class="btn-primary btn-link">Solicitar novo link</RouterLink>
+        </div>
+
+        <div v-else-if="!sucesso">
           <div class="form-header">
-            <h2 class="form-title">Criar conta</h2>
-            <p class="form-sub">Dois minutos e você já começa a rastrear</p>
+            <h2 class="form-title">Redefinir senha</h2>
+            <p class="form-sub">Escolha sua nova senha</p>
           </div>
 
-          <form @submit.prevent="handleCadastro">
-            <!-- Honeypot anti-bot: invisível para humanos, bots preenchem -->
-            <div class="hp-field" aria-hidden="true">
-              <label for="website">Website</label>
-              <input
-                id="website"
-                v-model="form.website"
-                type="text"
-                tabindex="-1"
-                autocomplete="off"
-              />
-            </div>
-
+          <form @submit.prevent="handleRedefinir">
             <div class="field">
-              <label>Nome completo</label>
-              <input
-                v-model="form.nome"
-                type="text"
-                placeholder="Como podemos te chamar"
-                autocomplete="name"
-                required
-              />
-            </div>
-
-            <div class="field">
-              <label>Email</label>
-              <input
-                v-model="form.email"
-                type="email"
-                placeholder="seu@email.com"
-                autocomplete="email"
-                required
-              />
-            </div>
-
-            <div class="field">
-              <label>Senha</label>
+              <label>Nova senha</label>
               <div class="input-wrap">
                 <input
-                  v-model="form.senha"
+                  v-model="form.novaSenha"
                   :type="mostrarSenha ? 'text' : 'password'"
                   placeholder="Mínimo 8 caracteres"
                   autocomplete="new-password"
@@ -88,24 +62,35 @@
               </div>
             </div>
 
-            <p v-if="auth.erro" class="erro">{{ auth.erro }}</p>
+            <div class="field">
+              <label>Confirmar nova senha</label>
+              <input
+                v-model="form.confirmacao"
+                :type="mostrarSenha ? 'text' : 'password'"
+                placeholder="Repita a senha"
+                autocomplete="new-password"
+                minlength="8"
+                required
+              />
+            </div>
 
-            <button type="submit" class="btn-primary" :disabled="auth.carregando">
-              <Loader2 v-if="auth.carregando" :size="14" class="spin" />
-              {{ auth.carregando ? 'Criando conta...' : 'Criar conta' }}
+            <p v-if="erro" class="erro">{{ erro }}</p>
+
+            <button type="submit" class="btn-primary" :disabled="carregando">
+              <Loader2 v-if="carregando" :size="14" class="spin" />
+              {{ carregando ? 'Salvando...' : 'Redefinir senha' }}
             </button>
           </form>
 
           <p class="auth-link">
-            Já tem conta?
-            <RouterLink to="/login">Entrar</RouterLink>
+            <RouterLink to="/login">Voltar ao login</RouterLink>
           </p>
         </div>
 
         <div v-else class="sucesso-box">
           <div class="sucesso-ring">✓</div>
-          <p class="sucesso-titulo">Conta criada</p>
-          <p class="sucesso-sub">Enviamos um link de confirmação — ele vale por 2 horas.</p>
+          <p class="sucesso-titulo">Senha redefinida</p>
+          <p class="sucesso-sub">Tudo certo — entre com a sua nova senha.</p>
           <RouterLink to="/login" class="btn-primary btn-link">Ir para o login</RouterLink>
         </div>
 
@@ -116,18 +101,35 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { reactive, ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { redefinirSenha } from '@/api/auth'
 import { Loader2 } from 'lucide-vue-next'
 
-const auth = useAuthStore()
-const sucesso = ref(false)
-const mostrarSenha = ref(false)
-const form = reactive({ nome: '', email: '', senha: '', website: '' })
+const route = useRoute()
+const token = computed(() => route.query.token || '')
 
-async function handleCadastro() {
-  const ok = await auth.cadastrar(form.nome, form.email, form.senha, form.website)
-  if (ok) sucesso.value = true
+const sucesso = ref(false)
+const carregando = ref(false)
+const mostrarSenha = ref(false)
+const erro = ref(null)
+const form = reactive({ novaSenha: '', confirmacao: '' })
+
+async function handleRedefinir() {
+  if (form.novaSenha !== form.confirmacao) {
+    erro.value = 'As senhas não coincidem.'
+    return
+  }
+  carregando.value = true
+  erro.value = null
+  try {
+    await redefinirSenha({ token: token.value, novaSenha: form.novaSenha })
+    sucesso.value = true
+  } catch (error) {
+    erro.value = error.response?.data?.mensagem || 'Não foi possível redefinir. Tente novamente.'
+  } finally {
+    carregando.value = false
+  }
 }
 </script>
 
@@ -139,7 +141,7 @@ async function handleCadastro() {
   background: var(--bg);
 }
 
-/* ── Painel esquerdo — idêntico ao login ── */
+/* ── Painel esquerdo — musgo sólido ── */
 .art-panel {
   width: 400px;
   flex-shrink: 0;
@@ -382,34 +384,32 @@ form {
 
 .btn-link {
   text-decoration: none;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .spin { animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Sucesso ── */
 .sucesso-box {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
-  padding: 8px 0;
+  gap: 10px;
 }
 
 .sucesso-ring {
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: var(--moss-subtle);
   color: var(--moss);
+  font-size: 22px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .sucesso-titulo {
@@ -439,14 +439,4 @@ form {
 }
 
 .auth-link a:hover { text-decoration: underline; }
-
-/* Honeypot: fora da tela, invisível para humanos — não usar display:none
-   (alguns bots pulam campos escondidos assim) */
-.hp-field {
-  position: absolute;
-  left: -9999px;
-  top: -9999px;
-  opacity: 0;
-  pointer-events: none;
-}
 </style>

@@ -1,116 +1,101 @@
 <template>
   <div class="dashboard">
 
-    <!-- Saudação -->
-    <div class="greeting">
-      <h2 class="greeting-title">
-        Bem-vinda de volta{{ nomeExibido ? ', ' + nomeExibido : '' }}. 👋
-      </h2>
-      <p class="greeting-sub">Aqui está um resumo da sua busca de emprego.</p>
-    </div>
+    <!-- Chip de meta semanal — renderizado no topbar do AppLayout -->
+    <Teleport to="#topbar-actions">
+      <div class="meta-chip">
+        <span class="meta-ring">
+          <span class="meta-ring-fill" :style="{ background: anelMeta }"></span>
+          <span class="meta-ring-hole"></span>
+        </span>
+        <span class="meta-texto"><b>{{ candidaturasSemana }} de {{ META_SEMANAL }}</b> candidaturas essa semana</span>
+      </div>
+    </Teleport>
 
-    <!-- Cards de métricas -->
     <div class="metrics-grid">
       <div class="metric-card">
-        <div class="metric-header">
-          <span class="metric-label">Candidaturas ativas</span>
-          <div class="metric-icon" style="background: rgba(217,69,24,0.08); color: #D94518;">
-            <Briefcase :size="16" />
-          </div>
-        </div>
-        <p class="metric-value">{{ metricas.total }}</p>
-        <p class="metric-sub">processos em andamento</p>
+        <p class="metric-label">Candidaturas ativas</p>
+        <p class="metric-value">{{ metricas.ativas }}</p>
+        <p class="metric-sub">em processo agora</p>
       </div>
 
-      <div class="metric-card">
-        <div class="metric-header">
-          <span class="metric-label">Em entrevista</span>
-          <div class="metric-icon" style="background: rgba(37,99,235,0.08); color: #2563EB;">
-            <Users :size="16" />
-          </div>
-        </div>
+      <div class="metric-card metric-card--moss">
+        <p class="metric-label">Em entrevista</p>
         <p class="metric-value">{{ metricas.entrevistas }}</p>
-        <p class="metric-sub">entrevistas ativas</p>
+        <p class="metric-sub">seguindo bem</p>
       </div>
 
-      <div class="metric-card">
-        <div class="metric-header">
-          <span class="metric-label">Wishlist</span>
-          <div class="metric-icon" style="background: rgba(217,119,6,0.08); color: #D97706;">
-            <Star :size="16" />
-          </div>
-        </div>
-        <p class="metric-value">{{ metricas.wishlist }}</p>
-        <p class="metric-sub">vagas salvas</p>
-      </div>
-
-      <div class="metric-card">
-        <div class="metric-header">
-          <span class="metric-label">Propostas</span>
-          <div class="metric-icon" style="background: rgba(5,150,105,0.08); color: #059669;">
-            <TrendingUp :size="16" />
-          </div>
-        </div>
-        <p class="metric-value">{{ metricas.propostas }}</p>
-        <p class="metric-sub">ofertas recebidas</p>
+      <div class="metric-card metric-card--clay">
+        <p class="metric-label">Próxima ação</p>
+        <template v-if="proximaAcao">
+          <p class="metric-acao">{{ proximaAcao.proximaAcaoDescricao }}</p>
+          <p class="metric-sub">{{ proximaAcao.empresaNome }}{{ proximaAcao.quando ? ' · ' + proximaAcao.quando : '' }}</p>
+        </template>
+        <template v-else>
+          <p class="metric-acao">Nada agendado</p>
+          <p class="metric-sub">aproveite para avançar uma etapa</p>
+        </template>
       </div>
     </div>
 
-    <!-- Conteúdo principal -->
-    <div class="dashboard-body">
+    <!-- ── Follow-ups vencidos e de hoje ── -->
+    <div v-if="followupsPendentes.length > 0" class="section followups">
+      <div class="section-header">
+        <h3 class="section-title">Follow-ups para agora</h3>
+        <RouterLink to="/candidaturas" class="section-link">Ir para as etapas →</RouterLink>
+      </div>
+      <div class="followups-list">
+        <div v-for="c in followupsPendentes" :key="c.id" class="followup-row">
+          <span class="followup-quando" :class="{ vencida: c.diasAtraso > 0 }">
+            {{ c.diasAtraso > 0 ? `há ${c.diasAtraso}d` : 'hoje' }}
+          </span>
+          <div class="followup-info">
+            <p class="followup-acao">{{ c.proximaAcaoDescricao }}</p>
+            <p class="followup-vaga">{{ c.vagaTitulo }} · {{ c.empresaNome }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <!-- Candidaturas recentes -->
+    <div class="dashboard-body">
       <div class="section">
         <div class="section-header">
-          <h3 class="section-title">Candidaturas recentes</h3>
+          <h3 class="section-title">Andamento recente</h3>
           <RouterLink to="/candidaturas" class="section-link">Ver todas →</RouterLink>
         </div>
 
-        <div v-if="carregando" class="empty-state">
-          <p>Carregando...</p>
+        <div v-if="carregando" class="sk-lista">
+          <div v-for="n in 4" :key="n" class="sk-row"></div>
         </div>
 
         <div v-else-if="candidaturasRecentes.length === 0" class="empty-state">
-          <div class="empty-icon"><Inbox :size="28" /></div>
+          <div class="empty-icon"><Inbox :size="24" /></div>
           <p class="empty-title">Nenhuma candidatura ainda</p>
           <p class="empty-sub">Cadastre uma empresa, uma vaga e comece a rastrear.</p>
           <RouterLink to="/empresas" class="btn-action">Começar agora</RouterLink>
         </div>
 
         <div v-else class="candidaturas-list">
-          <div
-            v-for="c in candidaturasRecentes"
-            :key="c.id"
-            class="candidatura-row"
-          >
+          <div v-for="c in candidaturasRecentes" :key="c.id" class="candidatura-row">
             <div class="candidatura-info">
               <p class="candidatura-vaga">{{ c.vagaTitulo }}</p>
               <p class="candidatura-empresa">{{ c.empresaNome }}</p>
             </div>
             <div class="candidatura-right">
-              <span class="status-badge" :style="statusStyle(c.status)">
-                {{ statusLabel(c.status) }}
-              </span>
+              <span class="status-badge" :style="statusStyle(c.status)">{{ statusLabel(c.status) }}</span>
               <span class="candidatura-data">{{ formatarData(c.criadoEm) }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Pipeline resumido -->
       <div class="section">
         <div class="section-header">
-          <h3 class="section-title">Pipeline</h3>
+          <h3 class="section-title">Por etapa</h3>
         </div>
         <div class="pipeline">
-          <div
-            v-for="etapa in pipeline"
-            :key="etapa.status"
-            class="pipeline-item"
-          >
-            <div class="pipeline-count" :style="{ color: etapa.cor }">
-              {{ etapa.total }}
-            </div>
+          <div v-for="etapa in pipeline" :key="etapa.status" class="pipeline-item">
+            <div class="pipeline-count" :style="{ color: etapa.cor }">{{ etapa.total }}</div>
             <div class="pipeline-bar-wrap">
               <div
                 class="pipeline-bar"
@@ -124,7 +109,6 @@
           </div>
         </div>
       </div>
-
     </div>
 
   </div>
@@ -132,66 +116,83 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useAuthStore } from '@/stores/auth'
 import { listar } from '@/api/candidaturas'
-import { Briefcase, Users, Star, TrendingUp, Inbox } from 'lucide-vue-next'
+import { STATUS, ETAPAS_PIPELINE, statusLabel, statusStyle } from '@/constants/status'
+import { Inbox } from 'lucide-vue-next'
 
-
-const auth = useAuthStore()
 const candidaturas = ref([])
 const carregando = ref(true)
 
-const nomeExibido = computed(() => {
-  const nome = auth.usuario?.nome || ''
-  return nome.split(' ')[0]
+const META_SEMANAL = 5
+const STATUS_FINAIS = ['ACEITA', 'REJEITADA', 'DESISTIDA']
+
+const metricas = computed(() => ({
+  total:       candidaturas.value.length,
+  ativas:      candidaturas.value.filter(c => !STATUS_FINAIS.includes(c.status)).length,
+  entrevistas: candidaturas.value.filter(c => ['TRIAGEM_TELEFONICA','ENTREVISTA_TECNICA','ENTREVISTA_COMPORTAMENTAL'].includes(c.status)).length,
+}))
+
+const candidaturasSemana = computed(() => {
+  const seteDiasAtras = new Date()
+  seteDiasAtras.setDate(seteDiasAtras.getDate() - 7)
+  return candidaturas.value.filter(c => c.criadoEm && new Date(c.criadoEm) >= seteDiasAtras).length
 })
 
-const metricas = computed(() => {
-  const ativas = candidaturas.value
-  return {
-    total:       ativas.length,
-    wishlist:    ativas.filter(c => c.status === 'LISTA_DESEJO').length,
-    entrevistas: ativas.filter(c => ['TRIAGEM_TELEFONICA','ENTREVISTA_TECNICA','ENTREVISTA_COMPORTAMENTAL'].includes(c.status)).length,
-    propostas:   ativas.filter(c => c.status === 'PROPOSTA_RECEBIDA').length,
-  }
+const anelMeta = computed(() => {
+  const pct = Math.min(candidaturasSemana.value / META_SEMANAL * 100, 100)
+  return `conic-gradient(var(--moss) 0% ${pct}%, var(--border) ${pct}% 100%)`
+})
+
+const proximaAcao = computed(() => {
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0)
+  const comAcao = candidaturas.value
+    .filter(c => c.proximaAcaoDescricao && !STATUS_FINAIS.includes(c.status))
+    .sort((a, b) => {
+      if (!a.proximaAcaoEm) return 1
+      if (!b.proximaAcaoEm) return -1
+      return new Date(a.proximaAcaoEm) - new Date(b.proximaAcaoEm)
+    })
+  if (comAcao.length === 0) return null
+  const futuras = comAcao.filter(c => c.proximaAcaoEm && parseData(c.proximaAcaoEm) >= hoje)
+  const escolhida = futuras[0] || comAcao[0]
+  return { ...escolhida, quando: formatarProximaAcao(escolhida.proximaAcaoEm) }
+})
+
+// Follow-ups vencidos ou de hoje, mais atrasados primeiro
+const followupsPendentes = computed(() => {
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0)
+  return candidaturas.value
+    .filter(c => c.proximaAcaoEm && c.proximaAcaoDescricao && !STATUS_FINAIS.includes(c.status))
+    .map(c => ({ ...c, diasAtraso: Math.round((hoje - parseData(c.proximaAcaoEm)) / 86400000) }))
+    .filter(c => c.diasAtraso >= 0)
+    .sort((a, b) => b.diasAtraso - a.diasAtraso)
 })
 
 const candidaturasRecentes = computed(() =>
-  [...candidaturas.value]
-    .sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm))
-    .slice(0, 5)
+  [...candidaturas.value].sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm)).slice(0, 5)
 )
 
-const pipeline = computed(() => [
-  { status: 'LISTA_DESEJO',             label: 'Wishlist',     cor: '#9C8E84', total: candidaturas.value.filter(c => c.status === 'LISTA_DESEJO').length },
-  { status: 'APLICADA',                 label: 'Aplicadas',    cor: '#2563EB', total: candidaturas.value.filter(c => c.status === 'APLICADA').length },
-  { status: 'TRIAGEM_TELEFONICA',       label: 'Triagem',      cor: '#D97706', total: candidaturas.value.filter(c => c.status === 'TRIAGEM_TELEFONICA').length },
-  { status: 'ENTREVISTA_TECNICA',       label: 'Técnica',      cor: '#C47C3E', total: candidaturas.value.filter(c => c.status === 'ENTREVISTA_TECNICA').length },
-  { status: 'ENTREVISTA_COMPORTAMENTAL',label: 'Comportamental',cor: '#7C3AED',total: candidaturas.value.filter(c => c.status === 'ENTREVISTA_COMPORTAMENTAL').length },
-  { status: 'TESTE_PRATICO',            label: 'Teste',        cor: '#0D9488', total: candidaturas.value.filter(c => c.status === 'TESTE_PRATICO').length },
-  { status: 'PROPOSTA_RECEBIDA',        label: 'Proposta',     cor: '#059669', total: candidaturas.value.filter(c => c.status === 'PROPOSTA_RECEBIDA').length },
-])
+const pipeline = computed(() => ETAPAS_PIPELINE.map(s => ({
+  status: s,
+  label:  STATUS[s].label,
+  cor:    STATUS[s].cor,
+  total:  candidaturas.value.filter(c => c.status === s).length,
+})))
 
-const statusMap = {
-  LISTA_DESEJO:             { label: 'Wishlist',       cor: '#9C8E84', bg: '#f3f2f1' },
-  APLICADA:                 { label: 'Aplicada',       cor: '#2563EB', bg: '#EFF6FF' },
-  TRIAGEM_TELEFONICA:       { label: 'Triagem',        cor: '#D97706', bg: '#FFFBEB' },
-  ENTREVISTA_TECNICA:       { label: 'Ent. Técnica',   cor: '#C47C3E', bg: '#FEF3C7' },
-  ENTREVISTA_COMPORTAMENTAL:{ label: 'Ent. Comport.',  cor: '#7C3AED', bg: '#F5F3FF' },
-  TESTE_PRATICO:            { label: 'Teste',          cor: '#0D9488', bg: '#F0FDFA' },
-  PROPOSTA_RECEBIDA:        { label: 'Proposta',       cor: '#059669', bg: '#F0FDF4' },
-  ACEITA:                   { label: 'Aceita',         cor: '#047857', bg: '#ECFDF5' },
-  REJEITADA:                { label: 'Rejeitada',      cor: '#DC2626', bg: '#FEF2F2' },
-  DESISTIDA:                { label: 'Desistida',      cor: '#6B7280', bg: '#F9FAFB' },
+// proximaAcaoEm é LocalDate ("2026-07-16") — parse local para não deslocar o dia por fuso
+function parseData(data) {
+  const [ano, mes, dia] = String(data).split('T')[0].split('-').map(Number)
+  return new Date(ano, mes - 1, dia)
 }
 
-function statusLabel(status) {
-  return statusMap[status]?.label || status
-}
-
-function statusStyle(status) {
-  const s = statusMap[status] || { cor: '#6B7280', bg: '#F9FAFB' }
-  return { color: s.cor, background: s.bg }
+function formatarProximaAcao(data) {
+  if (!data) return ''
+  const d = parseData(data)
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0)
+  const diffDias = Math.round((d - hoje) / 86400000)
+  if (diffDias === 0) return 'hoje'
+  if (diffDias === 1) return 'amanhã'
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
 }
 
 function formatarData(data) {
@@ -200,11 +201,10 @@ function formatarData(data) {
 }
 
 onMounted(async () => {
-  console.log('onMounted rodou')
   try {
     const { data } = await listar()
     candidaturas.value = data
-  } catch  {
+  } catch {
     candidaturas.value = []
   } finally {
     carregando.value = false
@@ -213,254 +213,207 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
+.dashboard { display: flex; flex-direction: column; gap: var(--sp-6); }
 
-/* Saudação */
-.greeting-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1208;
-  letter-spacing: -0.02em;
-  margin-bottom: 4px;
-}
-
-.greeting-sub {
-  font-size: 13px;
-  color: #9a8878;
-}
-
-/* Métricas */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-.metric-card {
-  background: #FAF8F5;
-  border: 1px solid #EDE8E0;
-  border-radius: 14px;
-  padding: 20px;
-  transition: box-shadow 0.15s;
-}
-
-.metric-card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-}
-
-.metric-header {
+/* ── Chip de meta semanal (teleportado ao topbar) ── */
+.meta-chip {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 7px 16px 7px 7px;
 }
 
-.metric-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #9a8878;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.metric-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+.meta-ring {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.meta-ring-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.meta-ring-hole {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--surface);
+  z-index: 1;
+}
+
+.meta-texto { font-size: 12px; color: var(--text-secondary); }
+.meta-texto b { color: var(--text-primary); }
+
+/* ── 3 cards assimétricos ── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1.1fr;
+  gap: 14px;
+}
+
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
 }
 
 .metric-value {
-  font-size: 36px;
+  font-size: 38px;
   font-weight: 700;
-  color: #1a1208;
-  letter-spacing: -0.04em;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
   line-height: 1;
   margin-bottom: 4px;
 }
 
-.metric-sub {
-  font-size: 12px;
-  color: #b8a898;
+.metric-sub { font-size: 12px; color: var(--text-muted); }
+
+.metric-card--moss {
+  background: var(--moss);
+  border: none;
+}
+.metric-card--moss .metric-label { color: rgba(241, 243, 236, 0.7); }
+.metric-card--moss .metric-value { color: var(--text-inverse); }
+.metric-card--moss .metric-sub   { color: rgba(241, 243, 236, 0.65); }
+
+.metric-card--clay {
+  background: var(--clay);
+  border: none;
+}
+.metric-card--clay .metric-label { color: rgba(32, 36, 30, 0.65); margin-bottom: 10px; }
+.metric-card--clay .metric-sub   { color: rgba(32, 36, 30, 0.7); }
+
+.metric-acao {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 3px;
 }
 
-/* Body */
+/* ── Body ── */
 .dashboard-body {
   display: grid;
   grid-template-columns: 1fr 320px;
-  gap: 20px;
+  gap: 14px;
   align-items: start;
 }
 
-/* Seções */
 .section {
-  background: #FAF8F5;
-  border: 1px solid #EDE8E0;
-  border-radius: 14px;
-  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
 }
 
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1208;
-  letter-spacing: -0.01em;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .section-link {
   font-size: 12px;
-  color: #D94518;
-  font-weight: 500;
+  color: var(--moss);
+  font-weight: 600;
   text-decoration: none;
 }
-
 .section-link:hover { text-decoration: underline; }
 
-/* Estado vazio */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 32px 16px;
-  gap: 8px;
-}
+/* Empty */
+.empty-state { display: flex; flex-direction: column; align-items: center; text-align: center; padding: var(--sp-8) var(--sp-4); gap: var(--sp-2); }
+.empty-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--surface-alt); color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin-bottom: var(--sp-1); }
+.empty-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.empty-sub { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+.btn-action { margin-top: var(--sp-2); padding: var(--sp-2) var(--sp-4); background: var(--moss); color: var(--text-inverse); border-radius: var(--radius-md); font-size: 13px; font-weight: 600; text-decoration: none; transition: background 0.15s; }
+.btn-action:hover { background: var(--moss-hover); }
 
-.empty-icon {
-  width: 52px; height: 52px;
-  border-radius: 50%;
-  background: #EDE8E0;
-  color: #9a8878;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 4px;
-}
+/* Follow-ups para agora */
+.followups-list { display: flex; flex-direction: column; }
 
-.empty-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1208;
-}
-
-.empty-sub {
-  font-size: 12px;
-  color: #9a8878;
-  line-height: 1.5;
-}
-
-.btn-action {
-  margin-top: 8px;
-  padding: 8px 18px;
-  background: #D94518;
-  color: #fff;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background 0.15s;
-}
-
-.btn-action:hover { background: #BB3510; }
-
-/* Lista de candidaturas */
-.candidaturas-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.candidatura-row {
+.followup-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 11px 12px;
+  gap: 14px;
+  padding: 10px 6px;
   border-radius: 10px;
   transition: background 0.1s;
 }
+.followup-row:hover { background: var(--bg); }
 
-.candidatura-row:hover { background: rgba(0,0,0,0.03); }
-
-.candidatura-vaga {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #1a1208;
-  margin-bottom: 2px;
-}
-
-.candidatura-empresa {
-  font-size: 12px;
-  color: #9a8878;
-}
-
-.candidatura-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.followup-quando {
   flex-shrink: 0;
-}
-
-.status-badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 20px;
-  white-space: nowrap;
-}
-
-.candidatura-data {
-  font-size: 11px;
-  color: #b8a898;
-  white-space: nowrap;
-}
-
-/* Pipeline */
-.pipeline {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.pipeline-item {
-  display: grid;
-  grid-template-columns: 28px 1fr 100px;
-  align-items: center;
-  gap: 10px;
-}
-
-.pipeline-count {
-  font-size: 15px;
-  font-weight: 700;
+  min-width: 52px;
   text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  color: var(--moss);
+  background: var(--moss-subtle);
 }
 
-.pipeline-bar-wrap {
-  height: 5px;
-  background: #EDE8E0;
-  border-radius: 3px;
-  overflow: hidden;
+.followup-quando.vencida {
+  color: var(--clay);
+  background: var(--clay-subtle);
 }
 
-.pipeline-bar {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.4s ease;
-  min-width: 3px;
-}
+.followup-info { min-width: 0; }
+.followup-acao { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.followup-vaga { font-size: 12px; color: var(--text-muted); }
 
-.pipeline-label {
-  font-size: 12px;
-  color: #9a8878;
-}
+/* Andamento recente */
+.candidaturas-list { display: flex; flex-direction: column; }
+.candidatura-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 6px; border-radius: 10px; transition: background 0.1s; gap: 12px; }
+.candidatura-row:hover { background: var(--bg); }
+.candidatura-info { min-width: 0; }
+.candidatura-vaga { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.candidatura-empresa { font-size: 12px; color: var(--text-muted); }
+.candidatura-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.status-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.candidatura-data { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+
+/* Skeleton */
+.sk-lista { display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
+.sk-row { height: 44px; border-radius: 10px; background: var(--surface-alt); position: relative; overflow: hidden; }
+.sk-row::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); animation: shimmer 1.3s infinite; }
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+
+/* Por etapa */
+.pipeline { display: flex; flex-direction: column; gap: 16px; }
+.pipeline-item { display: grid; grid-template-columns: 20px 1fr 78px; align-items: center; gap: 10px; }
+.pipeline-count { font-size: 13px; font-weight: 700; text-align: center; }
+.pipeline-bar-wrap { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.pipeline-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+.pipeline-label { font-size: 11.5px; color: var(--text-muted); }
 </style>

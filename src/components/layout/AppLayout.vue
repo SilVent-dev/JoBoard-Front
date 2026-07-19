@@ -1,47 +1,35 @@
 <template>
   <div class="app-layout">
 
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo-mark">
-          <Briefcase :size="14" />
-        </div>
-        <div class="logo-text">
-          <span class="logo-name">Joboard</span>
-          <span class="logo-sub">Career Atelier</span>
-        </div>
+    <aside class="rail">
+      <div class="brand-mark" title="Marco">
+        <div class="brand-diamond"></div>
       </div>
 
-      <nav class="sidebar-nav">
+      <nav class="rail-nav">
         <RouterLink
           v-for="item in navItems"
           :key="item.to"
           :to="item.to"
-          class="nav-item"
+          class="rail-item"
           :class="{ active: isActive(item.to) }"
         >
-          <component :is="item.icon" :size="16" class="nav-icon" />
-          <span>{{ item.label }}</span>
+          <span class="shape" :class="item.shape">
+            <span v-if="item.shape === 'shape-square'" class="shape-glyph"></span>
+            <template v-if="item.shape === 'shape-bars'">
+              <span class="bar"></span>
+              <span class="bar bar-70"></span>
+              <span class="bar bar-90"></span>
+            </template>
+          </span>
+          <span class="rail-label">{{ item.label }}</span>
         </RouterLink>
       </nav>
 
-      <div class="sidebar-bottom">
-        <RouterLink to="/perfil" class="nav-item" :class="{ active: isActive('/perfil') }">
-          <Settings :size="16" class="nav-icon" />
-          <span>Perfil</span>
-        </RouterLink>
-        <button class="nav-item logout-btn" @click="handleLogout">
-          <LogOut :size="16" class="nav-icon" />
-          <span>Sair</span>
-        </button>
-
-        <div class="user-chip">
-          <div class="user-avatar">{{ iniciais }}</div>
-          <div class="user-info">
-            <span class="user-name">{{ nomeExibido }}</span>
-            <span class="user-email">{{ auth.usuario?.email || '' }}</span>
-          </div>
-        </div>
+      <div class="rail-footer">
+        <div class="rail-avatar">{{ iniciais }}</div>
+        <RouterLink to="/perfil" class="rail-link" :class="{ active: isActive('/perfil') }">Perfil</RouterLink>
+        <button class="rail-link" @click="handleLogout">Sair</button>
       </div>
     </aside>
 
@@ -49,15 +37,19 @@
       <header class="topbar">
         <div>
           <h1 class="page-title">{{ pageTitle }}</h1>
-          <p class="page-sub">{{ pageSubs[pageTitle] || '' }}</p>
+          <p class="page-sub">{{ pageSub }}</p>
         </div>
-        <div class="topbar-actions">
+        <div id="topbar-actions" class="topbar-actions">
           <slot name="topbar-actions" />
         </div>
       </header>
 
       <main class="content">
-        <RouterView />
+        <RouterView v-slot="{ Component }">
+          <Transition name="rota" mode="out-in">
+            <component :is="Component" />
+          </Transition>
+        </RouterView>
       </main>
     </div>
 
@@ -68,52 +60,60 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import {
-  Briefcase, LayoutDashboard, ClipboardList,
-  Building2, Search, FileText, Settings, LogOut
-} from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
 const navItems = [
-  { to: '/',             label: 'Dashboard',    icon: LayoutDashboard },
-  { to: '/candidaturas', label: 'Applications', icon: ClipboardList },
-  { to: '/empresas',     label: 'Companies',    icon: Building2 },
-  { to: '/vagas',        label: 'Jobs',         icon: Search },
-  { to: '/curriculos',   label: 'Resumes',      icon: FileText },
+  { to: '/',             label: 'Início',   shape: 'shape-square' },
+  { to: '/candidaturas', label: 'Etapas',   shape: 'shape-circle' },
+  { to: '/vagas',        label: 'Vagas',    shape: 'shape-diamond' },
+  { to: '/empresas',     label: 'Empresas', shape: 'shape-triangle' },
+  { to: '/curriculos',   label: 'CVs',      shape: 'shape-bars' },
+  { to: '/insights',     label: 'Insights', shape: 'shape-donut' },
 ]
 
 const pageTitles = {
   '/':             'Dashboard',
-  '/candidaturas': 'Applications',
-  '/empresas':     'Companies',
-  '/vagas':        'Jobs',
-  '/curriculos':   'Resumes',
-  '/perfil':       'User Profile',
+  '/candidaturas': 'Candidaturas',
+  '/empresas':     'Empresas',
+  '/vagas':        'Vagas',
+  '/curriculos':   'Currículos',
+  '/insights':     'Insights',
+  '/perfil':       'Perfil',
 }
 
 const pageSubs = {
-  'Dashboard':    'Your career overview at a glance.',
-  'Applications': 'Track every step of your job search.',
-  'Companies':    'Manage your company catalogue.',
-  'Jobs':         'Browse and filter saved opportunities.',
-  'Resumes':      'Manage your CV versions.',
-  'User Profile': 'Manage your professional identity and preferences.',
+  '/':             'Aqui está como sua semana está indo.',
+  '/candidaturas': 'Cada etapa do processo, sem perder o fio.',
+  '/empresas':     'Seu catálogo de empresas.',
+  '/vagas':        'As oportunidades que valem seu tempo, num só lugar.',
+  '/curriculos':   'Suas versões de currículo.',
+  '/insights':     'O que o seu histórico já pode te contar.',
+  '/perfil':       'Sua identidade profissional.',
 }
 
-const pageTitle = computed(() => {
+const baseRoute = computed(() => {
   const base = '/' + route.path.split('/')[1]
-  return pageTitles[route.path] || pageTitles[base] || 'Joboard'
+  return pageTitles[route.path] ? route.path : base
 })
+
+const primeiroNome = computed(() => (auth.usuario?.nome || '').split(' ')[0])
+
+const pageTitle = computed(() => {
+  if (baseRoute.value === '/') {
+    return primeiroNome.value ? `Bom dia, ${primeiroNome.value}` : 'Bom dia'
+  }
+  return pageTitles[baseRoute.value] || 'Marco'
+})
+
+const pageSub = computed(() => pageSubs[baseRoute.value] || '')
 
 const iniciais = computed(() => {
   const nome = auth.usuario?.nome || ''
   return nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() || 'C'
 })
-
-const nomeExibido = computed(() => auth.usuario?.nome || 'Candidato')
 
 function isActive(to) {
   if (to === '/') return route.path === '/'
@@ -130,195 +130,269 @@ function handleLogout() {
 .app-layout {
   display: flex;
   height: 100vh;
-  background: #F5F0EB;
+  background-color: var(--bg);
+  /* Ruído sutil (~3%) sobre o celadon para a cor sólida não parecer chapada.
+     SVG inline; pinta acima da cor de fundo e abaixo do conteúdo (cards têm
+     fundo próprio e cobrem o grão). */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
   font-family: var(--font-ui);
 }
 
-/* Sidebar */
-.sidebar {
-  width: 220px;
+/* ── Rail ────────────────────────────── */
+.rail {
+  width: 76px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  padding: 20px 12px;
+  align-items: center;
+  padding: 22px 0;
+  background: transparent;
+  border-right: 1px solid var(--rail-border);
 }
 
-.sidebar-header {
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--moss);
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 8px 20px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  margin-bottom: 12px;
-}
-
-.logo-mark {
-  width: 32px; height: 32px;
-  border-radius: 9px;
-  background: #D94518;
-  color: #fff;
-  display: flex; align-items: center; justify-content: center;
+  justify-content: center;
+  margin-bottom: 30px;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(217,69,24,0.3);
 }
 
-.logo-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.logo-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1a1208;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-.logo-sub {
-  font-size: 10px;
-  color: #b8a898;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+.brand-diamond {
+  width: 11px;
+  height: 11px;
+  background: var(--clay);
+  transform: rotate(45deg);
+  border-radius: 3px;
 }
 
 /* Nav */
-.sidebar-nav {
+.rail-nav {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 22px;
+  align-items: center;
 }
 
-.nav-item {
+.rail-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 9px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 500;
-  color: #6a5a4a;
+  gap: 6px;
   text-decoration: none;
-  transition: background 0.1s, color 0.1s;
-  border: none;
-  background: none;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
 }
 
-.nav-item:hover {
-  background: rgba(0,0,0,0.04);
-  color: #1a1208;
-}
-
-.nav-item.active {
-  background: #fff;
-  color: #1a1208;
+.rail-label {
+  font-size: 8.5px;
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
-.nav-icon { flex-shrink: 0; }
-
-.nav-item.active .nav-icon { color: #D94518; }
-
-/* Bottom */
-.sidebar-bottom {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(0,0,0,0.06);
+.rail-item.active .rail-label {
+  font-weight: 700;
+  color: var(--moss);
 }
 
-.logout-btn { color: #6a5a4a; }
-.logout-btn:hover { color: #c0392b; background: rgba(192,57,43,0.06); }
+/* Micro-interações de hover no rail */
+.rail-item:not(.active):hover .rail-label { color: var(--text-secondary); }
+.rail-item:not(.active):hover .shape-square,
+.rail-item:not(.active):hover .shape-circle,
+.rail-item:not(.active):hover .shape-diamond,
+.rail-item:not(.active):hover .shape-donut { border-color: var(--text-secondary); }
+.rail-item:not(.active):hover .shape-triangle { border-bottom-color: var(--text-secondary); }
+.rail-item:not(.active):hover .bar { background: var(--text-secondary); }
 
-.user-chip {
+/* Formas geométricas */
+.shape {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 10px;
-  margin-top: 8px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.7);
-  border: 1px solid rgba(255,255,255,0.9);
+  justify-content: center;
 }
 
-.user-avatar {
-  width: 28px; height: 28px;
+.shape-square {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 2px solid var(--text-muted);
+}
+.rail-item.active .shape-square {
+  border: none;
+  background: var(--moss);
+}
+.shape-glyph {
+  display: none;
+  width: 8px;
+  height: 8px;
+  background: var(--text-inverse);
+  border-radius: 2px;
+}
+.rail-item.active .shape-glyph { display: block; }
+
+.shape-circle {
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: rgba(217,69,24,0.12);
-  color: #D94518;
-  font-size: 11px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
+  border: 2px solid var(--text-muted);
+}
+.rail-item.active .shape-circle {
+  border: none;
+  background: var(--moss);
 }
 
-.user-info {
+.shape-diamond {
+  width: 14px;
+  height: 14px;
+  background: transparent;
+  border: 2px solid var(--text-muted);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+.rail-item.active .shape-diamond {
+  border: none;
+  background: var(--moss);
+}
+
+.shape-triangle {
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 14px solid var(--text-muted);
+}
+.rail-item.active .shape-triangle {
+  border-bottom-color: var(--moss);
+}
+
+.shape-donut {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 5px solid var(--text-muted);
+}
+.rail-item.active .shape-donut {
+  border-color: var(--moss);
+}
+
+.shape-bars {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  width: 16px;
+}
+.bar {
+  height: 2px;
+  background: var(--text-muted);
+  border-radius: 1px;
+}
+.bar-70 { width: 70%; }
+.bar-90 { width: 90%; }
+.rail-item.active .bar { background: var(--moss); }
+
+/* Rodapé do rail */
+.rail-footer {
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rail-border);
+  width: 100%;
 }
 
-.user-name {
-  font-size: 12px; font-weight: 600;
-  color: #1a1208;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.rail-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--moss-subtle);
+  color: var(--moss);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.user-email {
-  font-size: 10.5px; color: #b8a898;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.rail-link {
+  font-size: 8.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-ui);
 }
 
-/* Main */
+.rail-link:hover,
+.rail-link.active {
+  color: var(--moss);
+}
+
+/* ── Main area ──────────────────────── */
 .main-area {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
-  margin: 12px 12px 12px 0;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 
 .topbar {
-  padding: 24px 28px 20px;
-  border-bottom: 1px solid #f0ebe4;
+  padding: 32px 40px 20px;
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
   flex-shrink: 0;
 }
 
 .page-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #1a1208;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  text-wrap: balance;
 }
 
 .page-sub {
-  font-size: 13px;
-  color: #9a8878;
-  margin-top: 3px;
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin-top: 6px;
 }
 
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding-top: 4px;
+  gap: var(--sp-2);
 }
 
 .content {
   flex: 1;
   overflow-y: auto;
-  padding: 28px;
+  padding: 0 40px 40px;
+}
+
+/* Transição suave entre rotas */
+.rota-enter-active,
+.rota-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.rota-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.rota-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 </style>

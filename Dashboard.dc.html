@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box}body{margin:0}::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#DCE2D3;border-radius:3px}</style>
+</helmet>
+<div style="--bg:#F1F3EC;--surface:#FFFFFF;--surface-alt:#E7EBDF;--rail-border:#DCE2D3;--border:#DCE2D3;--border-subtle:#E7EBDF;--text-primary:#20241E;--text-secondary:#54594B;--text-muted:#82887A;--moss:#3F5D4E;--moss-hover:#35503F;--moss-subtle:rgba(63,93,78,0.12);--clay:#C1652E;--clay-subtle:rgba(193,101,46,0.14);--success:#5B8C6B;--success-subtle:rgba(91,140,107,0.14);--warning:#C79A3B;--warning-subtle:rgba(199,154,59,0.14);--danger:#B8564A;--danger-subtle:rgba(184,86,74,0.14);--info:#5C7FA6;--info-subtle:rgba(92,127,166,0.14);--purple:#8B7BB0;--purple-subtle:rgba(139,123,176,0.14);--teal:#4E8C8C;--teal-subtle:rgba(78,140,140,0.14);font-family:'Inter',system-ui,sans-serif;display:flex;min-height:100vh;background:var(--bg);color:var(--text-primary)">
+
+  <aside style="width:76px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:22px 0;border-right:1px solid var(--rail-border)">
+    <div style="width:32px;height:32px;border-radius:9px;background:var(--moss);display:flex;align-items:center;justify-content:center;margin-bottom:30px"><div style="width:11px;height:11px;background:var(--clay);transform:rotate(45deg);border-radius:3px"></div></div>
+
+    <nav style="display:flex;flex-direction:column;gap:22px;align-items:center;flex:1">
+      <a href="Dashboard.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none">
+        <span style="width:18px;height:18px;border-radius:5px;background:var(--moss);display:flex;align-items:center;justify-content:center"><span style="width:8px;height:8px;background:#F1F3EC;border-radius:2px"></span></span>
+        <span style="font-size:8.5px;font-weight:700;color:var(--moss);letter-spacing:0.03em;text-transform:uppercase">Início</span>
+      </a>
+      <a href="Candidaturas.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none">
+        <span style="width:18px;height:18px;border-radius:50%;border:2px solid var(--text-muted);display:flex;align-items:center;justify-content:center"></span>
+        <span style="font-size:8.5px;font-weight:600;color:var(--text-muted);letter-spacing:0.03em;text-transform:uppercase">Etapas</span>
+      </a>
+      <a href="Vagas.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none">
+        <span style="width:14px;height:14px;background:transparent;border:2px solid var(--text-muted);transform:rotate(45deg);border-radius:2px"></span>
+        <span style="font-size:8.5px;font-weight:600;color:var(--text-muted);letter-spacing:0.03em;text-transform:uppercase">Vagas</span>
+      </a>
+      <a href="Empresas.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none">
+        <span style="width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:14px solid var(--text-muted)"></span>
+        <span style="font-size:8.5px;font-weight:600;color:var(--text-muted);letter-spacing:0.03em;text-transform:uppercase">Empresas</span>
+      </a>
+      <a href="Curriculos.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none">
+        <span style="display:flex;flex-direction:column;gap:2px;width:16px">
+          <span style="height:2px;background:var(--text-muted);border-radius:1px"></span>
+          <span style="height:2px;background:var(--text-muted);border-radius:1px;width:70%"></span>
+          <span style="height:2px;background:var(--text-muted);border-radius:1px;width:90%"></span>
+        </span>
+        <span style="font-size:8.5px;font-weight:600;color:var(--text-muted);letter-spacing:0.03em;text-transform:uppercase">CVs</span>
+      </a>
+    </nav>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:16px;border-top:1px solid var(--rail-border);width:100%">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--moss-subtle);color:var(--moss);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">AL</div>
+      <a href="Perfil.dc.html" style="font-size:8.5px;font-weight:600;color:var(--text-muted);text-decoration:none;letter-spacing:0.03em;text-transform:uppercase">Perfil</a>
+      <a href="Login.dc.html" style="font-size:8.5px;font-weight:600;color:var(--text-muted);text-decoration:none;letter-spacing:0.03em;text-transform:uppercase">Sair</a>
+    </div>
+  </aside>
+
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+    <header style="padding:32px 40px 20px;display:flex;align-items:flex-end;justify-content:space-between;flex-shrink:0">
+      <div>
+        <h1 style="font-family:'Source Serif 4',serif;font-size:26px;font-weight:600;letter-spacing:-0.01em;color:var(--text-primary);margin:0">Bom dia, Ana</h1>
+        <p style="font-size:13.5px;color:var(--text-muted);margin:6px 0 0">Aqui está como sua semana está indo.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:7px 16px 7px 7px">
+        <span style="width:26px;height:26px;border-radius:50%;background:var(--surface-alt);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden"><span style="position:absolute;inset:0;background:conic-gradient(var(--moss) 0% 60%, var(--border) 60% 100%);border-radius:50%"></span><span style="width:18px;height:18px;border-radius:50%;background:var(--surface);z-index:1"></span></span>
+        <span style="font-size:12px;color:var(--text-secondary)"><b style="color:var(--text-primary)">3 de 5</b> candidaturas essa semana</span>
+      </div>
+    </header>
+
+    <main style="flex:1;overflow-y:auto;padding:0 40px 40px;display:flex;flex-direction:column;gap:24px">
+
+      <div style="display:grid;grid-template-columns:1.3fr 1fr 1.1fr;gap:14px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 24px;box-shadow:0 1px 2px rgba(32,36,30,0.04)">
+          <p style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 12px">Candidaturas ativas</p>
+          <p style="font-size:38px;font-weight:700;color:var(--text-primary);letter-spacing:-0.02em;line-height:1;margin:0 0 4px">6</p>
+          <p style="font-size:12px;color:var(--text-muted);margin:0">em processo agora</p>
+        </div>
+        <div style="background:var(--moss);border-radius:16px;padding:20px 24px">
+          <p style="font-size:11px;font-weight:600;color:rgba(241,243,236,0.7);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 12px">Em entrevista</p>
+          <p style="font-size:38px;font-weight:700;color:#F1F3EC;letter-spacing:-0.02em;line-height:1;margin:0 0 4px">2</p>
+          <p style="font-size:12px;color:rgba(241,243,236,0.65);margin:0">seguindo bem</p>
+        </div>
+        <div style="background:var(--clay);border-radius:16px;padding:20px 24px">
+          <p style="font-size:11px;font-weight:600;color:rgba(32,36,30,0.65);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 10px">Próxima ação</p>
+          <p style="font-size:16px;font-weight:700;color:#20241E;margin:0 0 3px">Entrevista técnica</p>
+          <p style="font-size:12px;color:rgba(32,36,30,0.7);margin:0">Nimbus Cloud · amanhã, 14h</p>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(32,36,30,0.04)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <h3 style="font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.05em;margin:0">Andamento recente</h3>
+            <a href="Candidaturas.dc.html" style="font-size:12px;color:var(--moss);text-decoration:none;font-weight:600">Ver todas →</a>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ recentes }}" as="c" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 6px;border-radius:10px;gap:12px">
+                <div style="min-width:0">
+                  <p style="font-size:13px;font-weight:600;color:var(--text-primary);margin:0 0 2px">{{ c.vaga }}</p>
+                  <p style="font-size:12px;color:var(--text-muted);margin:0">{{ c.empresa }}</p>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;flex-shrink:0">
+                  <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;color:{{ c.cor }};background:{{ c.bg }}">{{ c.statusLabel }}</span>
+                  <span style="font-size:11px;color:var(--text-muted);white-space:nowrap">{{ c.data }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(32,36,30,0.04)">
+          <h3 style="font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 18px">Por etapa</h3>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <sc-for list="{{ pipeline }}" as="p" hint-placeholder-count="7">
+              <div style="display:grid;grid-template-columns:20px 1fr 78px;align-items:center;gap:10px">
+                <span style="font-size:13px;font-weight:700;color:{{ p.cor }};text-align:center">{{ p.total }}</span>
+                <span style="height:5px;border-radius:3px;background:var(--border);display:block;position:relative;overflow:hidden"><span style="position:absolute;left:0;top:0;height:100%;border-radius:3px;background:{{ p.cor }};width:{{ p.largura }}"></span></span>
+                <span style="font-size:11.5px;color:var(--text-muted)">{{ p.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  candidaturas = [
+    { vaga: 'Engenheira de Software Pleno', empresa: 'Nimbus Cloud', status: 'ENTREVISTA_TECNICA', data: '12 jul' },
+    { vaga: 'Dev Backend Java', empresa: 'Vero Tech', status: 'TRIAGEM_TELEFONICA', data: '10 jul' },
+    { vaga: 'Product Engineer', empresa: 'Fiora Health', status: 'PROPOSTA_RECEBIDA', data: '08 jul' },
+    { vaga: 'Fullstack Developer', empresa: 'Bloom Studio', status: 'APLICADA', data: '05 jul' },
+    { vaga: 'Backend Sênior', empresa: 'Andes Labs', status: 'LISTA_DESEJO', data: '02 jul' },
+  ];
+
+  STATUS = {
+    LISTA_DESEJO: { label: 'Wishlist', cor: 'var(--text-muted)', bg: 'var(--surface-alt)' },
+    APLICADA: { label: 'Aplicada', cor: 'var(--info)', bg: 'var(--info-subtle)' },
+    TRIAGEM_TELEFONICA: { label: 'Triagem', cor: 'var(--warning)', bg: 'var(--warning-subtle)' },
+    ENTREVISTA_TECNICA: { label: 'Ent. Técnica', cor: 'var(--moss)', bg: 'var(--moss-subtle)' },
+    ENTREVISTA_COMPORTAMENTAL: { label: 'Comportamental', cor: 'var(--purple)', bg: 'var(--purple-subtle)' },
+    TESTE_PRATICO: { label: 'Teste', cor: 'var(--teal)', bg: 'var(--teal-subtle)' },
+    PROPOSTA_RECEBIDA: { label: 'Proposta', cor: 'var(--clay)', bg: 'var(--clay-subtle)' },
+  };
+
+  renderVals() {
+    const total = this.candidaturas.length;
+    const count = (s) => this.candidaturas.filter(c => c.status === s).length;
+    const recentes = this.candidaturas.map(c => ({ ...c, statusLabel: this.STATUS[c.status].label, cor: this.STATUS[c.status].cor, bg: this.STATUS[c.status].bg }));
+    const etapas = ['LISTA_DESEJO','APLICADA','TRIAGEM_TELEFONICA','ENTREVISTA_TECNICA','ENTREVISTA_COMPORTAMENTAL','TESTE_PRATICO','PROPOSTA_RECEBIDA'];
+    const pipeline = etapas.map(s => {
+      const c = count(s);
+      return { label: this.STATUS[s].label, cor: this.STATUS[s].cor, total: c, largura: (total > 0 ? (c/total*100) : 0) + '%' };
+    });
+    return { recentes, pipeline };
+  }
+}
+</script>
+</body>
+</html>

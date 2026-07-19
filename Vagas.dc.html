@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box}body{margin:0}::placeholder{color:#82887A}::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#DCE2D3;border-radius:3px}</style>
+</helmet>
+<div style="--bg:#F1F3EC;--surface:#FFFFFF;--surface-alt:#E7EBDF;--rail-border:#DCE2D3;--border:#DCE2D3;--border-subtle:#E7EBDF;--text-primary:#20241E;--text-secondary:#54594B;--text-muted:#82887A;--moss:#3F5D4E;--moss-hover:#35503F;--moss-subtle:rgba(63,93,78,0.12);--clay:#C1652E;--clay-subtle:rgba(193,101,46,0.14);--success:#5B8C6B;--success-subtle:rgba(91,140,107,0.14);--warning:#C79A3B;--warning-subtle:rgba(199,154,59,0.14);--danger:#B8564A;--danger-subtle:rgba(184,86,74,0.14);--info:#5C7FA6;--info-subtle:rgba(92,127,166,0.14);font-family:'Inter',system-ui,sans-serif;display:flex;min-height:100vh;background:var(--bg);color:var(--text-primary)">
+
+  <aside style="width:76px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:22px 0;border-right:1px solid var(--rail-border)">
+    <div style="width:32px;height:32px;border-radius:9px;background:var(--moss);display:flex;align-items:center;justify-content:center;margin-bottom:30px"><div style="width:11px;height:11px;background:var(--clay);transform:rotate(45deg);border-radius:3px"></div></div>
+    <nav style="display:flex;flex-direction:column;gap:22px;align-items:center;flex:1">
+      <a href="Dashboard.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none">
+        <span style="width:18px;height:18px;border-radius:5px;border:2px solid var(--text-muted);display:flex;align-items:center;justify-content:center"></span>
+        <span style="font-size:8.5px;font-weight:600;color:var(--text-muted);letter-spacing:0.03em;text-transform:uppercase">Início</span>
+      </a>
+      <a href="Candidaturas.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none">
+        <span style="width:18px;height:18px;border-radius:50%;border:2px solid var(--text-muted);display:flex;align-items:center;justify-content:center"></span>
+        <span style="font-size:8.5px;font-weight:600;color:var(--text-muted);letter-spacing:0.03em;text-transform:uppercase">Etapas</span>
+      </a>
+      <a href="Vagas.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none">
+        <span style="width:14px;height:14px;background:var(--moss);transform:rotate(45deg);border-radius:2px"></span>
+        <span style="font-size:8.5px;font-weight:700;color:var(--moss);letter-spacing:0.03em;text-transform:uppercase">Vagas</span>
+      </a>
+      <a href="Empresas.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none">
+        <span style="width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:14px solid var(--text-muted)"></span>
+        <span style="font-size:8.5px;font-weight:600;color:var(--text-muted);letter-spacing:0.03em;text-transform:uppercase">Empresas</span>
+      </a>
+      <a href="Curriculos.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none">
+        <span style="display:flex;flex-direction:column;gap:2px;width:16px">
+          <span style="height:2px;background:var(--text-muted);border-radius:1px"></span>
+          <span style="height:2px;background:var(--text-muted);border-radius:1px;width:70%"></span>
+          <span style="height:2px;background:var(--text-muted);border-radius:1px;width:90%"></span>
+        </span>
+        <span style="font-size:8.5px;font-weight:600;color:var(--text-muted);letter-spacing:0.03em;text-transform:uppercase">CVs</span>
+      </a>
+    </nav>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:16px;border-top:1px solid var(--rail-border);width:100%">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--moss-subtle);color:var(--moss);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">AL</div>
+      <a href="Perfil.dc.html" style="font-size:8.5px;font-weight:600;color:var(--text-muted);text-decoration:none;letter-spacing:0.03em;text-transform:uppercase">Perfil</a>
+      <a href="Login.dc.html" style="font-size:8.5px;font-weight:600;color:var(--text-muted);text-decoration:none;letter-spacing:0.03em;text-transform:uppercase">Sair</a>
+    </div>
+  </aside>
+
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+    <header style="padding:32px 40px 20px;flex-shrink:0">
+      <h1 style="font-family:'Source Serif 4',serif;font-size:26px;font-weight:600;letter-spacing:-0.01em;color:var(--text-primary);margin:0">Vagas</h1>
+      <p style="font-size:13.5px;color:var(--text-muted);margin:6px 0 0">As oportunidades que valem seu tempo, num só lugar.</p>
+    </header>
+
+    <main style="flex:1;overflow-y:auto;padding:0 40px 40px;display:flex;flex-direction:column;gap:16px">
+
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <input value="{{ busca }}" oninput="{{ onBusca }}" type="text" placeholder="Buscar por vaga ou empresa..." style="flex:1;min-width:200px;max-width:260px;padding:9px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text-primary);font-size:13px;font-family:inherit;outline:none" />
+        <select value="{{ filtroModelo }}" onchange="{{ onFiltroModelo }}" style="padding:8px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text-secondary);font-size:12.5px;font-family:inherit;outline:none">
+          <option value="">Modelo de trabalho</option><option value="REMOTO">Remoto</option><option value="HIBRIDO">Híbrido</option><option value="PRESENCIAL">Presencial</option>
+        </select>
+        <span style="font-size:12px;color:var(--text-muted);margin-left:6px">{{ contagem }} salvas</span>
+        <button onclick="{{ abrirNova }}" style="margin-left:auto;display:flex;align-items:center;gap:8px;padding:9px 18px;border:none;border-radius:10px;background:var(--moss);color:#F1F3EC;font-size:13px;font-weight:700;cursor:pointer">+ Adicionar vaga</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ vagasFiltradas }}" as="v" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;border-radius:14px;background:var(--surface);border:1px solid var(--border);box-shadow:0 1px 2px rgba(32,36,30,0.03)">
+            <div style="display:flex;align-items:flex-start;gap:14px;flex:1;min-width:0">
+              <div style="width:36px;height:36px;border-radius:10px;background:var(--moss-subtle);color:var(--moss);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ v.iniciais }}</div>
+              <div style="min-width:0">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <h3 style="font-size:14px;font-weight:700;color:var(--text-primary);letter-spacing:-0.01em;margin:0">{{ v.titulo }}</h3>
+                  <sc-if value="{{ v.fechada }}" hint-placeholder-val="{{ false }}"><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--danger-subtle);color:var(--danger)">Encerrada</span></sc-if>
+                </div>
+                <p style="font-size:12px;color:var(--text-muted);margin:2px 0 8px">{{ v.empresa }}</p>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  <span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;color:{{ v.modeloCor }};background:{{ v.modeloBg }}">{{ v.modeloLabel }}</span>
+                  <span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;color:var(--text-secondary);background:var(--surface-alt)">{{ v.contratoLabel }}</span>
+                  <span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;color:var(--text-secondary);background:var(--surface-alt)">{{ v.nivelLabel }}</span>
+                  <span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;color:var(--clay);background:var(--clay-subtle)">{{ v.faixaSalarial }}</span>
+                </div>
+              </div>
+            </div>
+            <span style="font-size:11.5px;color:var(--text-muted);white-space:nowrap;flex-shrink:0">{{ v.data }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+    </main>
+  </div>
+
+  <sc-if value="{{ modalAberto }}" hint-placeholder-val="{{ false }}">
+    <div onclick="{{ fecharNova }}" style="position:fixed;inset:0;background:rgba(32,36,30,0.45);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:24px">
+      <div onclick="{{ stop }}" style="width:100%;max-width:520px;max-height:88vh;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:0 24px 56px rgba(32,36,30,0.25)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid var(--border)">
+          <h3 style="font-size:15px;font-weight:700;color:var(--text-primary);margin:0">Adicionar vaga</h3>
+          <button onclick="{{ fecharNova }}" style="background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer">✕</button>
+        </div>
+        <div style="padding:20px 26px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <label style="font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Empresa</label>
+              <input value="{{ form.empresa }}" oninput="{{ onEmpresa }}" type="text" placeholder="Nome da empresa" style="padding:9px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface-alt);color:var(--text-primary);font-size:13px;font-family:inherit;outline:none" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <label style="font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Título</label>
+              <input value="{{ form.titulo }}" oninput="{{ onTitulo }}" type="text" placeholder="Ex: Dev Backend Jr" style="padding:9px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface-alt);color:var(--text-primary);font-size:13px;font-family:inherit;outline:none" />
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <label style="font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Modelo</label>
+              <select value="{{ form.modelo }}" onchange="{{ onModelo }}" style="padding:9px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface-alt);color:var(--text-primary);font-size:13px;font-family:inherit;outline:none">
+                <option value="REMOTO">Remoto</option><option value="HIBRIDO">Híbrido</option><option value="PRESENCIAL">Presencial</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <label style="font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Faixa salarial</label>
+              <input value="{{ form.faixa }}" oninput="{{ onFaixa }}" type="text" placeholder="R$ 5.000 - 8.000" style="padding:9px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface-alt);color:var(--text-primary);font-size:13px;font-family:inherit;outline:none" />
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;padding:16px 26px;border-top:1px solid var(--border)">
+          <button onclick="{{ fecharNova }}" style="padding:9px 18px;border:1px solid var(--border);border-radius:9px;background:none;color:var(--text-secondary);font-size:13px;font-weight:500;cursor:pointer">Cancelar</button>
+          <button onclick="{{ salvarNova }}" style="padding:9px 18px;border:none;border-radius:9px;background:var(--moss);color:#F1F3EC;font-size:13px;font-weight:700;cursor:pointer">Salvar vaga</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    busca: '', filtroModelo: '', modalAberto: false,
+    form: { empresa: '', titulo: '', modelo: 'REMOTO', faixa: '' },
+    vagas: [
+      { titulo: 'Engenheira de Software Pleno', empresa: 'Nimbus Cloud', modelo: 'REMOTO', contrato: 'CLT', nivel: 'PLENO', faixa: 'R$ 9.000 - 12.000', fechada: false, data: '12 jul' },
+      { titulo: 'Dev Backend Java', empresa: 'Vero Tech', modelo: 'HIBRIDO', contrato: 'PJ', nivel: 'SENIOR', faixa: 'R$ 12.000 - 16.000', fechada: false, data: '10 jul' },
+      { titulo: 'Product Engineer', empresa: 'Fiora Health', modelo: 'REMOTO', contrato: 'CLT', nivel: 'PLENO', faixa: 'R$ 10.000 - 14.000', fechada: false, data: '08 jul' },
+      { titulo: 'Fullstack Developer', empresa: 'Bloom Studio', modelo: 'PRESENCIAL', contrato: 'CLT', nivel: 'JUNIOR', faixa: 'R$ 5.500 - 7.000', fechada: true, data: '01 jul' },
+    ],
+  };
+
+  MODELO = { REMOTO: { label: 'Remoto', cor: 'var(--success)', bg: 'var(--success-subtle)' }, HIBRIDO: { label: 'Híbrido', cor: 'var(--info)', bg: 'var(--info-subtle)' }, PRESENCIAL: { label: 'Presencial', cor: 'var(--warning)', bg: 'var(--warning-subtle)' } };
+  CONTRATO = { CLT: 'CLT', PJ: 'PJ', ESTAGIO: 'Estágio', FREELANCE: 'Freelance' };
+  NIVEL = { ESTAGIARIO: 'Estagiário', JUNIOR: 'Júnior', PLENO: 'Pleno', SENIOR: 'Sênior' };
+
+  iniciais(nome) { return (nome || '').split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase(); }
+
+  renderVals() {
+    const q = this.state.busca.toLowerCase();
+    const filtradas = this.state.vagas
+      .filter(v => !q || v.titulo.toLowerCase().includes(q) || v.empresa.toLowerCase().includes(q))
+      .filter(v => !this.state.filtroModelo || v.modelo === this.state.filtroModelo)
+      .map(v => ({
+        ...v, iniciais: this.iniciais(v.empresa),
+        modeloLabel: this.MODELO[v.modelo].label, modeloCor: this.MODELO[v.modelo].cor, modeloBg: this.MODELO[v.modelo].bg,
+        contratoLabel: this.CONTRATO[v.contrato], nivelLabel: this.NIVEL[v.nivel],
+      }));
+
+    return {
+      busca: this.state.busca, filtroModelo: this.state.filtroModelo, modalAberto: this.state.modalAberto, form: this.state.form,
+      vagasFiltradas: filtradas, contagem: this.state.vagas.length,
+      onBusca: (e) => this.setState({ busca: e.target.value }),
+      onFiltroModelo: (e) => this.setState({ filtroModelo: e.target.value }),
+      onEmpresa: (e) => this.setState(s => ({ form: { ...s.form, empresa: e.target.value } })),
+      onTitulo: (e) => this.setState(s => ({ form: { ...s.form, titulo: e.target.value } })),
+      onModelo: (e) => this.setState(s => ({ form: { ...s.form, modelo: e.target.value } })),
+      onFaixa: (e) => this.setState(s => ({ form: { ...s.form, faixa: e.target.value } })),
+      abrirNova: () => this.setState({ modalAberto: true, form: { empresa: '', titulo: '', modelo: 'REMOTO', faixa: '' } }),
+      fecharNova: () => this.setState({ modalAberto: false }),
+      stop: (e) => e.stopPropagation(),
+      salvarNova: () => {
+        const f = this.state.form;
+        if (!f.titulo || !f.empresa) return;
+        this.setState(s => ({
+          modalAberto: false,
+          vagas: [{ titulo: f.titulo, empresa: f.empresa, modelo: f.modelo, contrato: 'CLT', nivel: 'PLENO', faixa: f.faixa || 'A combinar', fechada: false, data: 'agora' }, ...s.vagas],
+        }));
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
