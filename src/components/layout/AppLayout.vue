@@ -45,11 +45,7 @@
       </header>
 
       <main class="content">
-        <RouterView v-slot="{ Component }">
-          <Transition name="rota" mode="out-in">
-            <component :is="Component" />
-          </Transition>
-        </RouterView>
+        <RouterView />
       </main>
     </div>
 
@@ -380,19 +376,5 @@ function handleLogout() {
   flex: 1;
   overflow-y: auto;
   padding: 0 40px 40px;
-}
-
-/* Transição suave entre rotas */
-.rota-enter-active,
-.rota-leave-active {
-  transition: opacity 0.18s ease, transform 0.18s ease;
-}
-.rota-enter-from {
-  opacity: 0;
-  transform: translateY(6px);
-}
-.rota-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
 }
 </style>
