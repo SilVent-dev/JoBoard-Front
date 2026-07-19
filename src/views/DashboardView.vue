@@ -1,8 +1,10 @@
 <template>
   <div class="dashboard">
 
-    <!-- Chip de meta semanal — renderizado no topbar do AppLayout -->
-    <Teleport to="#topbar-actions">
+    <!-- Chip de meta semanal — renderizado no topbar do AppLayout.
+         `defer` adia a resolução do alvo p/ depois do render, evitando alvo null
+         quando AppLayout e Dashboard montam juntos (ex.: logout→login). -->
+    <Teleport defer to="#topbar-actions">
       <div class="meta-chip">
         <span class="meta-ring">
           <span class="meta-ring-fill" :style="{ background: anelMeta }"></span>
